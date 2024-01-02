@@ -35,7 +35,12 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+   """Return all pictures"""
+   if data:
+       return jsonify(data), 200
+
+   return {"message": "No pictures found"}, 404
+
 
 ######################################################################
 # GET A PICTURE
@@ -44,7 +49,12 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
+   """Return picture with given id"""
+   for item in data:
+       if item['id'] == id:
+           return jsonify(item), 200
+
+   return {"message": f"Picture with id {id} not found"}, 404
 
 
 ######################################################################
@@ -52,7 +62,16 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+  """Create a new picture"""
+  picture = request.get_json()
+
+  for item in data:
+      if item['id'] == picture['id']:
+          return {"Message": f"picture with id {picture['id']} already present"}, 302
+
+  data.append(picture)
+  return jsonify(picture), 201
+
 
 ######################################################################
 # UPDATE A PICTURE
@@ -61,11 +80,27 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+  """Update a picture"""
+  updated_picture = request.get_json()
+
+  for i, item in enumerate(data):
+      if item['id'] == id:
+          data[i] = updated_picture
+          return jsonify(updated_picture), 200
+
+  return {"message": "picture not found"}, 404
+
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+ """Delete a picture"""
+ for i, item in enumerate(data):
+     if item['id'] == id:
+         del data[i]
+         return '', 204
+
+ return {"message": "picture not found"}, 404
+
